@@ -1,9 +1,16 @@
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import reactLogo from '../assets/react.svg';
 import './App.scss';
+import { useLoaderData } from 'react-router-dom';
 
 export const App: FC = () => {
 	const [count, setCount] = useState(0);
+
+	const userData = useLoaderData();
+
+	useEffect(() => {
+		console.log(userData);
+	}, [userData]);
 
 	return (
 		<>
