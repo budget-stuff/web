@@ -11,7 +11,8 @@ export default defineConfig({
 		VitePWA({
 			registerType: 'autoUpdate',
 			workbox: {
-				globPatterns: ['**/*.{js,css,html,jpg,png,svg}']
+				globPatterns: ['**/*.{js,css,html,jpg,png,svg}'],
+				navigateFallbackDenylist: [/^\/api/]
 			},
 			manifest: {
 				name: 'budget-stuff',
