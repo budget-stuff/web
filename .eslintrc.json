@@ -1,0 +1,130 @@
+{
+	"root": true,
+	"ignorePatterns": ["util/**/*"],
+	"overrides": [
+	  {
+		"files": ["*.ts", "*.tsx"],
+		"parserOptions": {
+		  "project": ["tsconfig.json"],
+		  "createDefaultProgram": true
+		},
+		"plugins": ["eslint-plugin-import", "eslint-plugin-prefer-arrow"],
+		"extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended", "plugin:prettier/recommended"],
+		"rules": {
+		  "no-useless-escape": "off",
+		  "@typescript-eslint/no-empty-interface": [
+			  "error",
+			  {
+				"allowSingleExtends": true
+			  }
+		  ],
+		  "@typescript-eslint/explicit-member-accessibility": [
+			"error",
+			{
+			  "accessibility": "no-public"
+			}
+		  ],
+		  "@typescript-eslint/member-ordering": [
+			"error",
+			{
+			  "default": [
+				"static-field",
+				"instance-field",
+				"static-method",
+				"private-instance-method",
+				"protected-instance-method",
+				"public-instance-method"
+			  ]
+			}
+		  ],
+		  "@typescript-eslint/naming-convention": [
+			"error",
+			{
+			  "selector": "class",
+			  "format": ["PascalCase"]
+			},
+			{
+			  "selector": "interface",
+			  "format": ["PascalCase"],
+			  "custom": {
+				"regex": "^I[A-Z]",
+				"match": false
+			  }
+			},
+			{
+			  "selector": ["typeLike"],
+			  "format": ["PascalCase"],
+			  "custom": {
+				"regex": "^T[A-Z]",
+				"match": false
+			  }
+			},
+			{
+			  "selector": "variable",
+			  "format": ["camelCase", "UPPER_CASE", "PascalCase"],
+			  "leadingUnderscore": "allow"
+			},
+			{
+			  "selector": ["classProperty", "classMethod"],
+			  "format": ["camelCase"]
+			}
+		  ],
+		  "@typescript-eslint/ban-types": [
+			"error",
+			{
+			  "types": {
+				"Object": {
+				  "message": "Use {} instead."
+				},
+				"String": {
+				  "message": "Use 'string' instead."
+				},
+				"Number": {
+				  "message": "Use 'number' instead."
+				},
+				"Boolean": {
+				  "message": "Use 'boolean' instead."
+				},
+				"Function": {
+				  "message": "Avoid using the `Function` type. Prefer a specific function type, like `() => void`."
+				}
+			  }
+			}
+		  ],
+		  "@typescript-eslint/array-type": [
+			"error",
+			{
+			  "default": "array-simple"
+			}
+		  ],
+		  "@typescript-eslint/prefer-for-of": "error",
+		  "@typescript-eslint/no-namespace": "error",
+		  "arrow-body-style": ["error", "as-needed"],
+		  "eqeqeq": ["error", "always"],
+		  "curly": "error",
+		  "no-cond-assign": "error",
+		  "prefer-arrow/prefer-arrow-functions": "error",
+		  "no-return-await": "error",
+		  "no-await-in-loop": "error",
+		  "id-length": [
+			"error",
+			{
+			  "min": 2,
+			  "max": 36,
+			  "exceptions": ["i", "j", "k", "cb", "fn", "ms", "id", "x", "y"]
+			}
+		  ],
+		  "no-useless-return": "error",
+		  "@typescript-eslint/explicit-function-return-type": "error",
+		  "no-else-return": "error",
+		  "no-lonely-if": "error",
+		  "no-nested-ternary": "error",
+		  "no-unneeded-ternary": "error",
+		  "quotes": ["error", "single", { "avoidEscape": true }],
+		  "no-new-wrappers": "error",
+		  "@typescript-eslint/consistent-type-definitions": ["error", "interface"]
+		}
+	  }
+	]
+  }
+  
