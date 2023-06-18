@@ -1,31 +1,14 @@
-import { FC, useEffect, useState } from 'react';
-import reactLogo from '../assets/react.svg';
+import { observer } from 'mobx-react-lite';
+import { FC } from 'react';
+import { adaptivityStore } from '../store/adaptivity/adaptivity';
 import './App.scss';
-import { useLoaderData } from 'react-router-dom';
+import { AppDesktopView } from './core/app-views/AppDesktopView/AppDesktopView';
+import { AppMobileView } from './core/app-views/AppMobileView/AppMobileView';
 
-export const App: FC = () => {
-	const [count, setCount] = useState(0);
+export const App: FC = observer(() => {
+	if (adaptivityStore.screenBreakpoint === 'mobile') {
+		return <AppMobileView />;
+	}
 
-	const userData = useLoaderData();
-
-	useEffect(() => {
-		console.log(userData);
-	}, [userData]);
-
-	return (
-		<>
-			<div>
-				<a href="https://react.dev" target="_blank">
-					<img src={reactLogo} className="logo react" alt="React logo" />
-				</a>
-			</div>
-			<h1>Vite + React</h1>
-			<div className="card">
-				<button onClick={(): void => setCount(count => count + 1)}>count is {count}</button>
-				<p>
-					Edit <code>src/App.tsx</code> and save to test HMR
-				</p>
-			</div>
-		</>
-	);
-};
+	return <AppDesktopView />;
+});

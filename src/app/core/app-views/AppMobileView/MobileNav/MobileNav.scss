@@ -1,0 +1,14 @@
+.mobile-nav {
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+
+	&__item {
+		height: 40px;
+		display: grid;
+		place-items: center;
+
+		&.active {
+			background-color: aqua;
+		}
+	}
+}
