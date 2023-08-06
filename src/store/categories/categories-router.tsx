@@ -2,8 +2,9 @@ import { makeAutoObservable } from 'mobx';
 import { ReactElement } from 'react';
 import { CategoriesMain } from '../../app/content/Categories/CategoriesMain/CategoriesMain';
 import { CreateCategory } from '../../app/content/Categories/CreateCategory/CreateCategory';
+import { MyRouter } from 'src/models/my-router';
 
-class CategoriesRouter {
+class CategoriesRouter implements MyRouter<CategoriesRouteNames> {
 	currentView: ReactElement = (<CategoriesMain />);
 	currentRoute: CategoriesRouteNames = 'main';
 
@@ -14,15 +15,15 @@ class CategoriesRouter {
 	navigate(viewName: CategoriesRouteNames): void {
 		this.currentRoute = viewName;
 
-		this.currentView = categoriesRoutes[viewName];
+		this.currentView = categoriesRoutes[viewName]();
 	}
 }
 
 export type CategoriesRouteNames = 'main' | 'create';
 
-const categoriesRoutes: Record<CategoriesRouteNames, ReactElement> = {
-	main: <CategoriesMain />,
-	create: <CreateCategory />
+const categoriesRoutes: Record<CategoriesRouteNames, () => ReactElement> = {
+	main: () => <CategoriesMain />,
+	create: () => <CreateCategory />
 };
 
 export const categoriesRouter = new CategoriesRouter();

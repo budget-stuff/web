@@ -1,0 +1,13 @@
+.create-plan-form {
+	&__categories {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+		gap: 16px;
+	}
+
+	&__categories-item {
+		border-radius: 16px;
+		border: 1px solid #dadada;
+		padding: 12px;
+	}
+}

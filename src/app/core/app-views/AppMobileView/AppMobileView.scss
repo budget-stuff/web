@@ -1,7 +1,11 @@
 .app-mobile-view {
 	display: grid;
 	grid-template-rows: 1fr auto;
-	height: 100vh;
-	width: 100vw;
 	overflow: hidden;
+	padding-bottom: 40px;
+	position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
 }

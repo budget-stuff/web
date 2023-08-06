@@ -19,7 +19,7 @@ export const CreateCategory = observer(() => {
 
 	const onSubmit = (data: CreateCategoryData): void => {
 		categoriesStore.create(data);
-		toMainHandler();
+		// toMainHandler();
 	};
 
 	const toMainHandler = action(() => {
@@ -28,6 +28,7 @@ export const CreateCategory = observer(() => {
 
 	return (
 		<div>
+			<h4>Создание категории</h4>
 			<button onClick={toMainHandler}>back</button>
 			<form onSubmit={handleSubmit(onSubmit)}>
 				<input {...register('name')} />

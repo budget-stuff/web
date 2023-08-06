@@ -1,25 +1,20 @@
-import { action } from 'mobx';
 import { observer } from 'mobx-react-lite';
-import { categoriesRouter } from '../../../../store/categories/categories-router';
 import { Categories } from '../../../content/Categories/Categories';
 
-export const AppDesktopView = observer(() => {
-	const changeRouteHandler = action((): void => {
-		console.log(categoriesRouter.currentRoute);
-		if (categoriesRouter.currentRoute === 'main') {
-			categoriesRouter.navigate('create');
-		} else {
-			categoriesRouter.navigate('main');
-		}
-	});
+import { Operations } from 'src/app/content/Operations/Operations';
+import { Plans } from 'src/app/content/Plans/Plans';
+import './AppDesktopView.scss';
 
-	return (
-		<>
-			<h1>Vite + React</h1>
-			<div className="card">
-				<button onClick={changeRouteHandler}>current categories route {categoriesRouter.currentRoute}</button>
-				<Categories />
-			</div>
-		</>
-	);
-});
+export const AppDesktopView = observer(() => (
+	<div className="desktop-root">
+		<div className="card">
+			<Categories />
+		</div>
+		<div className="card">
+			<Plans />
+		</div>
+		<div className="card">
+			<Operations />
+		</div>
+	</div>
+));

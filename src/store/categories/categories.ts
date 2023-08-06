@@ -1,8 +1,8 @@
 import { autorun, makeAutoObservable, runInAction } from 'mobx';
-import { api } from '../../utils/api/api';
-import { CategoryData } from '../../models/categories';
-import { UserStore, userStore } from '../user/user';
 import { CreateCategoryData } from '../../app/content/Categories/CreateCategory/CreateCategory.models';
+import { CategoryData } from '../../models/categories';
+import { api } from '../../utils/api/api';
+import { UserStore, userStore } from '../user/user';
 
 export class CategoriesStore {
 	allCategories: CategoryData[] = [];
@@ -17,6 +17,10 @@ export class CategoriesStore {
 		});
 	}
 
+	getById(id: string): CategoryData | undefined {
+		return this.allCategories.find(category => category._id === id);
+	}
+
 	loadAll(): void {
 		api.get<CategoryData[]>('/api/categories').then(categories => {
 			runInAction(() => {
@@ -26,11 +30,35 @@ export class CategoriesStore {
 	}
 
 	create(data: CreateCategoryData): void {
-		api.post<CreateCategoryData, CategoryData>('/api/categories', data).then(createdCategory => {
-			runInAction(() => {
-				this.allCategories.push(createdCategory);
-			});
+		// временный айди, нужен чтобы после обработки запроса проще было заменить сущность на ту что пришла с БЕ
+		const tempId = Math.random().toString();
+
+		this.allCategories.push({
+			...data,
+			_id: tempId,
+			type: 'outcome',
+			status: 'active',
+			owner: {
+				email: '',
+				_id: ''
+			}
 		});
+
+		api.post<CreateCategoryData, CategoryData>('/api/categories', data)
+			.then(createdCategory => {
+				runInAction(() => {
+					this.allCategories = this.allCategories.map(category => {
+						if (category._id === tempId) {
+							return createdCategory;
+						}
+
+						return category;
+					});
+				});
+			})
+			.catch(() => {
+				this.allCategories = this.allCategories.filter(cat => cat._id !== tempId);
+			});
 	}
 }
 

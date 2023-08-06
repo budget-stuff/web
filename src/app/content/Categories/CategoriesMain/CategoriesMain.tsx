@@ -10,6 +10,7 @@ export const CategoriesMain = observer(() => {
 
 	return (
 		<div>
+			<h4>Все Категории</h4>
 			<button onClick={addCategoryHandler}>add</button>
 			<AllCategories />
 		</div>
