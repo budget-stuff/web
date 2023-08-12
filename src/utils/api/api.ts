@@ -25,6 +25,24 @@ class Api {
 			}
 		});
 	}
+
+	put<T>(endpoint: string, body: T): Promise<T>;
+	put<T, R>(endpoint: string, body: T): Promise<R>;
+	put<T, R>(endpoint: string, body: T): Promise<R> {
+		return this.baseFetch(endpoint, {
+			method: 'PUT',
+			body: JSON.stringify(body),
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
+	}
+
+	delete<T>(endpoint: string): Promise<T> {
+		return this.baseFetch(endpoint, {
+			method: 'DELETE'
+		});
+	}
 }
 
 export const api = new Api();

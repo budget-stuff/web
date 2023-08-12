@@ -1,0 +1,22 @@
+.category-preview {
+	border-radius: 16px;
+	border: 1px solid #888888;
+	padding: 12px;
+
+	&__header {
+		display: flex;
+		justify-content: space-between;
+	}
+
+	&__subcategories-container {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, 10px);
+		gap: 5px;
+	}
+
+	&__subcategory {
+		width: 10px;
+		height: 10px;
+		background-color: green;
+	}
+}

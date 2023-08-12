@@ -1,0 +1,18 @@
+.icon {
+	overflow: hidden;
+
+	&--small {
+		width: 18px;
+		height: 18px;
+	}
+
+	&--medium {
+		width: 20px;
+		height: 20px;
+	}
+
+	&--large {
+		width: 24px;
+		height: 24px;
+	}
+}

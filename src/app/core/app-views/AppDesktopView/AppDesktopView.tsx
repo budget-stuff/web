@@ -7,13 +7,13 @@ import './AppDesktopView.scss';
 
 export const AppDesktopView = observer(() => (
 	<div className="desktop-root">
-		<div className="card">
+		<div className="desktop-root__card">
 			<Categories />
 		</div>
-		<div className="card">
+		<div className="desktop-root__card">
 			<Plans />
 		</div>
-		<div className="card">
+		<div className="desktop-root__card">
 			<Operations />
 		</div>
 	</div>

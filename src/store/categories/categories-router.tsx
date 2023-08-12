@@ -1,8 +1,9 @@
 import { makeAutoObservable } from 'mobx';
 import { ReactElement } from 'react';
 import { CategoriesMain } from '../../app/content/Categories/CategoriesMain/CategoriesMain';
-import { CreateCategory } from '../../app/content/Categories/CreateCategory/CreateCategory';
 import { MyRouter } from 'src/models/my-router';
+import { SelectedCategory } from 'src/app/content/Categories/SelectedCategory/SelectedCategory';
+import { CategoryForm } from 'src/app/content/Categories/CategoryForm/CategoryForm';
 
 class CategoriesRouter implements MyRouter<CategoriesRouteNames> {
 	currentView: ReactElement = (<CategoriesMain />);
@@ -19,11 +20,12 @@ class CategoriesRouter implements MyRouter<CategoriesRouteNames> {
 	}
 }
 
-export type CategoriesRouteNames = 'main' | 'create';
+export type CategoriesRouteNames = 'main' | 'form' | 'selected';
 
 const categoriesRoutes: Record<CategoriesRouteNames, () => ReactElement> = {
 	main: () => <CategoriesMain />,
-	create: () => <CreateCategory />
+	form: () => <CategoryForm />,
+	selected: () => <SelectedCategory />
 };
 
 export const categoriesRouter = new CategoriesRouter();

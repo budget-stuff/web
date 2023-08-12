@@ -11,3 +11,8 @@ export interface CategoryData {
 	owner: UserData;
 	parentId?: string | null;
 }
+
+export interface RootCategoryData extends CategoryData {
+	parentId: null;
+	subcategories: CategoryData[];
+}

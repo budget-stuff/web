@@ -1,0 +1,15 @@
+.overline {
+	display: grid;
+	gap: 2px;
+
+	&__title {
+		font-size: 12px;
+		line-height: 14px;
+		color: grey;
+	}
+
+	&__text {
+		font-size: 16px;
+		line-height: 18px;
+	}
+}
