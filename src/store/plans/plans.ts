@@ -1,16 +1,37 @@
 import { autorun, makeAutoObservable, runInAction } from 'mobx';
 import { PlansCreateData } from 'src/app/content/Plans/PlansCreate/PlansCreate.models';
 import { OperationData } from 'src/models/operations';
-import { PlanCategoryData, PlanData } from 'src/models/plans';
+import { PlanData } from 'src/models/plans';
 import { UserData } from 'src/models/user';
 import { api } from '../../utils/api/api';
 import { UserStore, userStore } from '../user/user';
+import { EntityOperator } from '../entity-operator/entity-operator';
+import { Entity } from '../entity-operator/entity';
+import { OperationsStore, operationsStore } from '../operations/operations';
 
 export class PlansStore {
-	allPlans: PlanData[] = [];
-	selectedPlan: PlanData | undefined = undefined;
+	private baseUrl = '/api/plans';
+	private operator = new EntityOperator<PlanData>();
 
-	constructor(private userStore: UserStore) {
+	selectedPlan: Entity<PlanData> | undefined = undefined;
+
+	get selectedPlanOperations(): Array<Entity<OperationData>> {
+		if (this.selectedPlan) {
+			return this.operationsStore.allOperations.filter(
+				operation =>
+					operation.data.month === this.selectedPlan?.data.month &&
+					operation.data.year === this.selectedPlan?.data.year
+			);
+		}
+
+		return [];
+	}
+
+	get allPlans(): Array<Entity<PlanData>> {
+		return this.operator.items;
+	}
+
+	constructor(private userStore: UserStore, private operationsStore: OperationsStore) {
 		makeAutoObservable(this);
 
 		autorun(() => {
@@ -20,97 +41,46 @@ export class PlansStore {
 		});
 	}
 
-	setSelected(data: PlanData): void {
+	setSelected(data: Entity<PlanData>): void {
 		this.selectedPlan = data;
 	}
 
 	loadAll(): void {
-		api.get<PlanData[]>('/api/plans').then(plans => {
+		api.get<PlanData[]>(this.baseUrl).then(plans => {
 			runInAction(() => {
-				this.allPlans = plans;
+				this.operator.init(plans);
 
 				const today = new Date();
 
-				this.selectedPlan = plans.find(
-					plan => plan.month === today.getMonth() && plan.year === today.getFullYear()
+				const selectedPlan = this.allPlans.find(
+					plan => plan.data.month === today.getMonth() && plan.data.year === today.getFullYear()
 				);
+
+				if (selectedPlan) {
+					this.setSelected(selectedPlan);
+				}
 			});
 		});
 	}
 
-	create(data: PlansCreateData, categories: PlanCategoryData[]): void {
-		// временный айди, нужен чтобы после обработки запроса проще было заменить сущность на ту что пришла с БЕ
-		const tempId = Math.random().toString();
-
-		this.allPlans.push({
+	create(data: PlansCreateData): void {
+		const mockPlanData = {
 			...data,
 			owner: userStore.user as UserData,
-			_id: tempId,
-			categories
-		});
+			_id: ''
+		};
 
-		api.post<PlansCreateData, PlanData>('/api/plans', data)
-			.then(createdPlan => {
-				runInAction(() => {
-					this.allPlans = this.allPlans.map(plan => {
-						if (plan._id === tempId) {
-							return createdPlan;
-						}
+		const request = (): Promise<PlanData> => api.post<PlansCreateData, PlanData>(this.baseUrl, data);
 
-						return plan;
-					});
-				});
-			})
-			.catch(() => {
-				this.allPlans = this.allPlans.filter(plan => plan._id !== tempId);
-			});
+		this.operator.createEntity(mockPlanData, request);
 	}
 
-	addWaste(operation: OperationData): void {
-		this.allPlans = this.allPlans.map(plan => {
-			const operationDate = new Date(operation.date);
+	update(data: Partial<PlanData> & { _id: string }, item: Entity<PlanData>): void {
+		const request = (): Promise<PlanData> =>
+			api.put<Partial<PlanData> & { _id: string }, PlanData>(this.baseUrl + '/' + data._id, data);
 
-			const operationMonth = operationDate.getMonth();
-			const operationYear = operationDate.getFullYear();
-
-			const dateMatchesWithPlan = plan.month === operationMonth && plan.year === operationYear;
-
-			if (dateMatchesWithPlan) {
-				const categoryMatchesWithPlan = plan.categories.find(
-					planCategory => planCategory.category._id === operation.category._id
-				);
-
-				if (categoryMatchesWithPlan) {
-					categoryMatchesWithPlan.realWaste += operation.amount;
-				}
-			}
-
-			return plan;
-		});
-	}
-
-	removeWaste(operation: OperationData): void {
-		this.allPlans = this.allPlans.map(plan => {
-			const operationDate = new Date(operation.date);
-
-			const operationMonth = operationDate.getMonth();
-			const operationYear = operationDate.getFullYear();
-
-			const dateMatchesWithPlan = plan.month === operationMonth && plan.year === operationYear;
-
-			if (dateMatchesWithPlan) {
-				const categoryMatchesWithPlan = plan.categories.find(
-					planCategory => planCategory.category._id === operation.category._id
-				);
-
-				if (categoryMatchesWithPlan) {
-					categoryMatchesWithPlan.realWaste -= operation.amount;
-				}
-			}
-
-			return plan;
-		});
+		this.operator.updateEntity(data, item, request);
 	}
 }
 
-export const plansStore = new PlansStore(userStore);
+export const plansStore: PlansStore = new PlansStore(userStore, operationsStore);

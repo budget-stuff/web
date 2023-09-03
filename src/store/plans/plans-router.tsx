@@ -5,8 +5,8 @@ import { PlansCreate } from 'src/app/content/Plans/PlansCreate/PlansCreate';
 import { SelectedPlan } from 'src/app/content/Plans/SelectedPlan/SelectedPlan';
 import { MyRouter } from 'src/models/my-router';
 
-class PlansRouter implements MyRouter<PlansRouteNames> {
-	currentView: ReactElement = plansRoutes.all();
+export class PlansRouter implements MyRouter<PlansRouteNames> {
+	currentView: ReactElement = plansRoutes.selected();
 	currentRoute: PlansRouteNames = 'all';
 
 	constructor() {

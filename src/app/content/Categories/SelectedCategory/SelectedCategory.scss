@@ -1,4 +1,7 @@
 .selected-category {
+	display: grid;
+	gap: 16px;
+
 	&__subcategories {
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));

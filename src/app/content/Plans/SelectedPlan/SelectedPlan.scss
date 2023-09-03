@@ -1,0 +1,10 @@
+.selected-plan {
+	display: grid;
+	gap: 16px;
+
+	&__categories {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+		gap: 12px;
+	}
+}

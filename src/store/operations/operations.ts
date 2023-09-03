@@ -2,16 +2,17 @@ import { autorun, makeAutoObservable, runInAction } from 'mobx';
 import { api } from '../../utils/api/api';
 import { UserStore, userStore } from '../user/user';
 import { OperationData } from 'src/models/operations';
-import { PlansStore, plansStore } from '../plans/plans';
+import { EntityOperator } from '../entity-operator/entity-operator';
+import { Entity } from '../entity-operator/entity';
 
 export class OperationsStore {
-	private sourceAllOperations: OperationData[] = [];
+	private operator = new EntityOperator<OperationData>();
 
-	get allOperations(): OperationData[] {
-		return this.sourceAllOperations;
+	get allOperations(): Array<Entity<OperationData>> {
+		return this.operator.items;
 	}
 
-	constructor(private userStore: UserStore, private planStore: PlansStore) {
+	constructor(private userStore: UserStore) {
 		makeAutoObservable(this);
 
 		autorun(() => {
@@ -21,47 +22,23 @@ export class OperationsStore {
 		});
 	}
 
-	getById(id: string): OperationData | undefined {
-		return this.sourceAllOperations.find(operation => operation._id === id);
+	getById(id: string): Entity<OperationData> | undefined {
+		return this.operator.items.find(operation => operation.id === id);
 	}
 
 	loadAll(): void {
 		api.get<OperationData[]>('/api/operations').then(operations => {
 			runInAction(() => {
-				this.sourceAllOperations = operations;
+				this.operator.init(operations);
 			});
 		});
 	}
 
 	create(data: OperationData): void {
-		// временный айди, нужен чтобы после обработки запроса проще было заменить сущность на ту что пришла с БЕ
-		const tempId = Math.random().toString();
+		const request = (): Promise<OperationData> => api.post<OperationData, OperationData>('/api/operations', data);
 
-		this.sourceAllOperations.push({
-			...data,
-			_id: tempId
-		});
-
-		this.planStore.addWaste(data);
-
-		api.post<OperationData, OperationData>('/api/operations', data)
-			.then(createdOperation => {
-				runInAction(() => {
-					this.sourceAllOperations = this.sourceAllOperations.map(operation => {
-						if (operation._id === tempId) {
-							return createdOperation;
-						}
-
-						return operation;
-					});
-				});
-			})
-			.catch(() => {
-				this.sourceAllOperations = this.sourceAllOperations.filter(operation => operation._id !== tempId);
-
-				this.planStore.removeWaste(data);
-			});
+		this.operator.createEntity(data, request);
 	}
 }
 
-export const operationsStore = new OperationsStore(userStore, plansStore);
+export const operationsStore = new OperationsStore(userStore);

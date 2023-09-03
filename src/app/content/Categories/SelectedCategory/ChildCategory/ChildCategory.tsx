@@ -5,9 +5,11 @@ import { action } from 'mobx';
 import { Icon } from 'src/app/shared/Icon/Icon';
 
 import './ChildCategory.scss';
-import { EditCategory } from '../EditCategory/EditCategory';
+import { EditCategoryName } from '../EditCategory/EditCategoryName';
+import { Entity } from 'src/store/entity-operator/entity';
+import { Card } from 'src/app/shared/Card/Card';
 
-export const ChildCategory: FC<CategoryData> = category => {
+export const ChildCategory: FC<ChildCategoryProps> = ({ entity }) => {
 	const [editMode, setEditMode] = useState(false);
 
 	const toggleEditMode = (): void => {
@@ -15,18 +17,22 @@ export const ChildCategory: FC<CategoryData> = category => {
 	};
 
 	const onRemove = action((): void => {
-		categoriesStore.remove(category._id);
+		categoriesStore.remove(entity);
 	});
 
 	return (
-		<div className="child-category">
+		<Card className="child-category">
 			{editMode ? (
-				<EditCategory category={category} onSubmit={toggleEditMode} />
+				<EditCategoryName category={entity} onSubmit={toggleEditMode} />
 			) : (
-				<span onClick={toggleEditMode}>{category.name}</span>
+				<span onClick={toggleEditMode}>{entity.data.name}</span>
 			)}
 
 			<Icon name="remove" onClick={onRemove} />
-		</div>
+		</Card>
 	);
 };
+
+interface ChildCategoryProps {
+	entity: Entity<CategoryData>;
+}

@@ -7,7 +7,10 @@ import { ChildCategory } from './ChildCategory/ChildCategory';
 
 import './SelectedCategory.scss';
 import { useState } from 'react';
-import { EditCategory } from './EditCategory/EditCategory';
+import { EditCategoryName } from './EditCategory/EditCategoryName';
+import { Icon } from 'src/app/shared/Icon/Icon';
+import { CategoryData } from 'src/models/categories';
+import { NEW_CATEGORY_NAME } from '../consts/new-name';
 
 export const SelectedCategory = observer(() => {
 	const [edit, setEdit] = useState(false);
@@ -32,22 +35,37 @@ export const SelectedCategory = observer(() => {
 		);
 	}
 
+	const addSubcategory = (): void => {
+		const newSubcategoryData = {
+			name: NEW_CATEGORY_NAME,
+			parentId: selectedCategory.data._id,
+			type: selectedCategory.data.type
+		} as CategoryData;
+
+		categoriesStore.create(newSubcategoryData);
+	};
+
+	const subcategories = categoriesStore.getSubcatsFor(selectedCategory.data._id);
+
 	return (
 		<div className="selected-category">
 			{edit ? (
-				<EditCategory category={selectedCategory} onSubmit={toggleEditMode} />
+				<EditCategoryName category={selectedCategory} onSubmit={toggleEditMode} />
 			) : (
-				<h4 onClick={toggleEditMode}>{selectedCategory.name}</h4>
+				<h4 onClick={toggleEditMode}>{selectedCategory.data.name}</h4>
 			)}
 
 			<button onClick={toMain}>to main</button>
-			<Overline title="тип" text={CATEGORY_TYPE_NAME[selectedCategory.type]} />
+			<Overline title="тип">{CATEGORY_TYPE_NAME[selectedCategory.data.type]}</Overline>
 
-			<h5>Подкатегории</h5>
-			{selectedCategory.subcategories.length ? (
+			<div className="selected-category__header">
+				<h5>Подкатегории</h5>
+				<Icon name="add" onClick={addSubcategory} />
+			</div>
+			{subcategories.length ? (
 				<div className="selected-category__subcategories">
-					{selectedCategory.subcategories.map(childCategory => (
-						<ChildCategory key={childCategory._id} {...childCategory} />
+					{subcategories.map(childCategory => (
+						<ChildCategory key={childCategory.id} entity={childCategory} />
 					))}
 				</div>
 			) : (

@@ -6,13 +6,14 @@ import { CategoryData } from 'src/models/categories';
 import { categoriesStore } from 'src/store/categories/categories';
 import { object, string } from 'yup';
 
-import './EditCategory.scss';
+import './EditCategoryName.scss';
+import { Entity } from 'src/store/entity-operator/entity';
 
-export const EditCategory = observer<EditCategoryProps>(({ category, onSubmit }) => {
+export const EditCategoryName = observer<EditCategoryNameProps>(({ category, onSubmit }) => {
 	const submitButtonRef = useRef<HTMLButtonElement>(null);
 
 	const schema = object<Partial<CategoryData>>({
-		name: string().default(category.name)
+		name: string().default(category.data.name)
 	}).required();
 
 	const { handleSubmit, register, watch } = useForm<Partial<CategoryData>>({
@@ -25,7 +26,7 @@ export const EditCategory = observer<EditCategoryProps>(({ category, onSubmit })
 	const nameValue = watch('name');
 
 	const onSubmitHandler = (data: Partial<CategoryData>): void => {
-		categoriesStore.update({ ...data, _id: category._id }, category);
+		categoriesStore.update({ ...data, _id: category.data._id }, category);
 		onSubmit();
 	};
 
@@ -39,7 +40,7 @@ export const EditCategory = observer<EditCategoryProps>(({ category, onSubmit })
 	useEffect(() => {
 		const listener = (event: KeyboardEvent): void => {
 			if (event.key === 'Escape') {
-				if (nameValue === category.name) {
+				if (nameValue === category.data.name) {
 					onSubmit();
 				} else {
 					console.log(nameValue);
@@ -63,7 +64,7 @@ export const EditCategory = observer<EditCategoryProps>(({ category, onSubmit })
 	);
 });
 
-export interface EditCategoryProps {
-	category: CategoryData;
+export interface EditCategoryNameProps {
+	category: Entity<CategoryData>;
 	onSubmit: () => void;
 }

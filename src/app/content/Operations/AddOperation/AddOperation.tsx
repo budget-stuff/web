@@ -2,7 +2,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { action } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import { useForm } from 'react-hook-form';
-import { CategoryData } from 'src/models/categories';
 import { OperationForm } from 'src/models/operations';
 import { UserData } from 'src/models/user';
 import { categoriesStore } from 'src/store/categories/categories';
@@ -12,7 +11,7 @@ import { userStore } from 'src/store/user/user';
 import { date, number, object, string } from 'yup';
 
 export const AddOperation = observer(() => {
-	const allCategoriesIds = categoriesStore.allCategories.map(cat => cat._id);
+	const allCategoriesIds = categoriesStore.allCategories.map(cat => cat.data._id);
 
 	const schema = object<OperationForm>({
 		comment: string().default(''),
@@ -35,10 +34,12 @@ export const AddOperation = observer(() => {
 		console.log(data);
 		operationsStore.create({
 			...data,
-			category: categoriesStore.getById(data.category) as CategoryData,
+			category: data.category,
 			owner: userStore.user as UserData,
-			date: data.date.toISOString(),
-			_id: null as unknown as string
+			timestamp: data.date.getTime(),
+			_id: null as unknown as string,
+			month: data.date.getMonth(),
+			year: data.date.getFullYear()
 		});
 		// toMainHandler();
 	};
@@ -61,7 +62,7 @@ export const AddOperation = observer(() => {
 				<input type="date" {...register('date')} />
 
 				<select {...register('category')}>
-					{categoriesStore.allCategories.map(category => (
+					{categoriesStore.allCategories.map(({ data: category }) => (
 						<option key={category._id} value={category._id}>
 							{category.name}
 						</option>

@@ -1,10 +1,11 @@
-import { CategoryData } from './categories';
 import { UserData } from './user';
 
 export interface PlanCategoryData {
-	category: CategoryData;
+	/**
+	 * айдишник нужной категории
+	 */
+	category: string;
 	expectedWaste: number;
-	realWaste: number;
 }
 
 export interface PlanData {

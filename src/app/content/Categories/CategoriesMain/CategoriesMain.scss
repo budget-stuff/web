@@ -1,4 +1,11 @@
 .categories-main {
 	max-height: 100%;
 	overflow: auto;
+	display: grid;
+	gap: 16px;
+
+	&__type-title {
+		display: flex;
+		justify-content: space-between;
+	}
 }

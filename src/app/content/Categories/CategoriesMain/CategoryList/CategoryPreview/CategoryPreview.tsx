@@ -1,39 +1,47 @@
 import { observer } from 'mobx-react-lite';
 import { Icon } from 'src/app/shared/Icon/Icon';
-import { RootCategoryData } from 'src/models/categories';
 
 import { MouseEvent } from 'react';
 import { categoriesStore } from 'src/store/categories/categories';
 import { categoriesRouter } from 'src/store/categories/categories-router';
 import './CategoryPreview.scss';
+import { Entity } from 'src/store/entity-operator/entity';
+import { CategoryData } from 'src/models/categories';
+import { Card } from 'src/app/shared/Card/Card';
 
-export const CategoryPreview = observer<RootCategoryData>(category => {
+export const CategoryPreview = observer<CategoryPreviewProps>(({ entity }) => {
 	const onRemove = (event: MouseEvent): void => {
 		event.stopPropagation();
 
-		categoriesStore.remove(category._id);
+		categoriesStore.remove(entity);
 	};
 
 	const toSelected = (): void => {
-		categoriesStore.setSelected(category);
+		categoriesStore.setSelected(entity.data);
 
 		categoriesRouter.navigate('selected');
 	};
 
+	const subcategories = categoriesStore.getSubcatsFor(entity.data._id);
+
 	return (
-		<div className="category-preview" onClick={toSelected}>
+		<Card className="category-preview" onClick={toSelected}>
 			<div className="category-preview__header">
-				{category.name}
+				{entity.data.name}
 				<Icon name="remove" onClick={onRemove} />
 			</div>
 
-			{category.subcategories.length !== 0 && (
+			{subcategories.length !== 0 && (
 				<div className="category-preview__subcategories-container">
-					{category.subcategories.map(subCat => (
-						<div className="category-preview__subcategory" key={subCat._id}></div>
+					{subcategories.map(subCat => (
+						<div className="category-preview__subcategory" key={subCat.id}></div>
 					))}
 				</div>
 			)}
-		</div>
+		</Card>
 	);
 });
+
+export interface CategoryPreviewProps {
+	entity: Entity<CategoryData>;
+}

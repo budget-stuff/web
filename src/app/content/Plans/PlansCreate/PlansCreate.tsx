@@ -12,7 +12,6 @@ import { plansStore } from 'src/store/plans/plans';
 import { MONTH_FULL_NAMES } from '../consts/month-full-names';
 
 import './PlansCreate.scss';
-import { PlanCategoryData } from 'src/models/plans';
 
 const today = new Date();
 const currYear = today.getFullYear();
@@ -38,21 +37,11 @@ export const PlansCreate = observer(() => {
 	const selectedYear = getValues('year');
 
 	const availableCategories = categoriesStore.allCategories.filter(
-		category => !selectedCategories.find(selectedCategory => selectedCategory.category === category._id)
+		category => !selectedCategories.find(selectedCategory => selectedCategory.category === category.data._id)
 	);
 
 	const onSubmit = (data: PlansCreateData): void => {
-		// в форме собираем только айдишники категорий (так их просит бек)
-		// мапим их на данные категорий для создания плана
-		const mappedCategories: PlanCategoryData[] = data.categories.map(formCategory => ({
-			...formCategory,
-			category: categoriesStore.getById(formCategory.category) as CategoryData,
-			realWaste: 0
-		}));
-
-		plansStore.create(data, mappedCategories);
-		// toMainHandler();
-		console.log(data);
+		plansStore.create(data);
 	};
 
 	const categorySelectHandler = (evt: ChangeEvent<HTMLSelectElement>): void => {
@@ -70,10 +59,10 @@ export const PlansCreate = observer(() => {
 
 	const monthOptionElements = MONTH_FULL_NAMES.map((monthName, index) => {
 		// планы все планы за выбранный год
-		const selectedYearPlans = plansStore.allPlans.filter(plan => plan.year === selectedYear);
+		const selectedYearPlans = plansStore.allPlans.filter(plan => plan.data.year === selectedYear);
 
 		// в выбранном году ищем план на текущий месяц, если план уже создан - пользователь не может сделать это снова
-		const planAlreadyCreated = Boolean(selectedYearPlans.find(plan => plan.month === index));
+		const planAlreadyCreated = Boolean(selectedYearPlans.find(plan => plan.data.month === index));
 
 		return (
 			<option key={monthName} value={index} disabled={planAlreadyCreated}>
@@ -104,7 +93,7 @@ export const PlansCreate = observer(() => {
 				Категории
 				<div className="create-plan-form__categories">
 					{fields.map((field, index) => {
-						const category = categoriesStore.getById(field.category) as CategoryData;
+						const category = categoriesStore.getById(field.category)?.data as CategoryData;
 
 						return (
 							<div key={field.id} className="create-plan-form__categories-item">
@@ -119,8 +108,8 @@ export const PlansCreate = observer(() => {
 						<select onChange={categorySelectHandler}>
 							<option value="">-</option>
 							{availableCategories.map(category => (
-								<option key={category._id} value={category._id}>
-									{category.name}
+								<option key={category.id} value={category.data._id}>
+									{category.data.name}
 								</option>
 							))}
 						</select>
