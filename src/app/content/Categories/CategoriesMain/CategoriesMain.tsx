@@ -24,25 +24,17 @@ export const CategoriesMain = observer(() => {
 		<div className="categories-main">
 			<h4>Категории</h4>
 
-			{outcomeCategories.length !== 0 && (
-				<>
-					<div className="categories-main__type-title">
-						<h5>Расходы</h5>
-						<Icon name="add" onClick={(): void => addCategory('outcome')} />
-					</div>
-					<CategoryList categories={outcomeCategories} />
-				</>
-			)}
+			<div className="categories-main__type-title">
+				<h5>Расходы</h5>
+				<Icon name="add" onClick={(): void => addCategory('outcome')} />
+			</div>
+			<CategoryList categories={outcomeCategories} />
 
-			{incomeCategories.length !== 0 && (
-				<>
-					<div className="categories-main__type-title">
-						<h5>Доходы</h5>
-						<Icon name="add" onClick={(): void => addCategory('income')} />
-					</div>
-					<CategoryList categories={incomeCategories} />
-				</>
-			)}
+			<div className="categories-main__type-title">
+				<h5>Доходы</h5>
+				<Icon name="add" onClick={(): void => addCategory('income')} />
+			</div>
+			<CategoryList categories={incomeCategories} />
 		</div>
 	);
 });
